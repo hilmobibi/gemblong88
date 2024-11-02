@@ -11,11 +11,33 @@
             margin-top: 50px;
         }
         .card-container {
+            display: inline-block;
             margin: 10px;
+            vertical-align: top; /* Align cards at the top */
         }
         .result, .card-container {
             font-size: 1.2em;
             margin-bottom: 20px;
+        }
+        .button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .history {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        h2, h3 {
+            margin: 10px 0;
+        }
+        ul {
+            list-style-type: none; /* Remove default list styles */
+            padding: 0; /* Remove padding */
         }
     </style>
 </head>
@@ -25,30 +47,31 @@
 
     <div class="card-container">
         <h2>Player's Hand:</h2>
-        <div id="player-hand"></div>
+        <ul id="player-hand"></ul> <!-- Changed to an unordered list -->
     </div>
 
     <div class="card-container">
         <h2>Banker's Hand:</h2>
-        <div id="banker-hand"></div>
+        <ul id="banker-hand"></ul> <!-- Changed to an unordered list -->
     </div>
 
     <div class="result" id="ongoing-score">Current Score: (Player: 0, Banker: 0)</div>
     <div class="result" id="final-result"></div>
     
     <div>
-        <h2>Your Money: $<span id="player-money">1000</span></h2>
+        <h2>Your Money: <span id="player-money">Rp 1000.00</span></h2>
         <h3>Place Your Bet:</h3>
-        <input type="number" id="bet-amount" placeholder="Enter bet amount" min="1" max="1000" />
-        <div>
-            <label><input type="radio" name="bet-type" value="player" checked> Player</label>
-            <label><input type="radio" name="bet-type" value="banker"> Banker</label>
-            <label><input type="radio" name="bet-type" value="tie"> Tie</label>
-        </div>
-        <button onclick="placeBet()">Place Bet</button>
+        <button class="button" onclick="placeBet('player')">Bet on Player</button>
+        <button class="button" onclick="placeBet('banker')">Bet on Banker</button>
+        <button class="button" onclick="placeBet('tie')">Bet on Tie</button>
     </div>
 
-    <button onclick="playBaccarat()">Start New Round</button>
+    <button class="button" onclick="playBaccarat()">Start New Round</button>
+
+    <div class="history">
+        <h3>Game History</h3>
+        <ul id="history-list"></ul>
+    </div>
 
     <script src="script.js"></script>
 </body>

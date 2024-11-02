@@ -5,9 +5,10 @@ const cards = {
     spade: ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
 };
 
-let playerMoney = 1000; // Player's starting money
-let currentBet = 0; // Current bet amount
+let playerMoney = 1000; // Player's starting money in rupiah
+let currentBet = 100; // Default bet amount in rupiah
 let currentBetType = ""; // Type of bet (Player, Banker, Tie)
+let gameHistory = []; // Array to hold the history of wins
 
 function drawCard() {
     const suits = Object.keys(cards);
@@ -31,12 +32,9 @@ function calculateScore(hand) {
 }
 
 function displayCard(hand, elementId) {
-    const handDisplay = hand.map(card => `${card.rank} of ${card.suit}`).join(", ");
-    document.getElementById(elementId).innerText = handDisplay;
-}
-
-function updateOngoingScore(playerScore, bankerScore) {
-    document.getElementById("ongoing-score").innerText = `Current Score: (Player: ${playerScore}, Banker: ${bankerScore})`;
+    // Display cards as list items
+    const handDisplay = hand.map(card => `${card.rank} of ${card.suit}`).map(item => `<li>${item}</li>`).join("");
+    document.getElementById(elementId).innerHTML = handDisplay; // Use innerHTML for rendering list
 }
 
 function displayFinalResult(playerScore, bankerScore) {
@@ -45,10 +43,10 @@ function displayFinalResult(playerScore, bankerScore) {
 
     if (playerScore > bankerScore) {
         resultText = "Player wins!";
-        if (currentBetType === "player") winnings = currentBet; // Player wins
+        if (currentBetType === "player") winnings = currentBet * 2; // Player wins double
     } else if (bankerScore > playerScore) {
         resultText = "Banker wins!";
-        if (currentBetType === "banker") winnings = currentBet; // Banker wins
+        if (currentBetType === "banker") winnings = currentBet * 1.95; // Banker wins at 1.95x
     } else {
         resultText = "It's a tie!";
         if (currentBetType === "tie") winnings = currentBet * 8; // Tie wins at 8 to 1
@@ -56,52 +54,66 @@ function displayFinalResult(playerScore, bankerScore) {
 
     // Update player's money based on winnings
     playerMoney += winnings;
+
+    // Subtract the bet if player lost
     if (currentBetType !== "tie" && (playerScore !== bankerScore || currentBetType === "tie")) {
-        playerMoney -= currentBet; // Subtract the bet if player lost
+        playerMoney -= currentBet; 
     }
 
+    // Show final result and update player's money
     document.getElementById("final-result").innerText = `Final Result: ${resultText} (Player: ${playerScore}, Banker: ${bankerScore})`;
-    document.getElementById("player-money").innerText = playerMoney; // Update player's money display
+    document.getElementById("player-money").innerText = `Rp ${playerMoney.toFixed(2)}`; // Update player's money display with rupiah
+    
+    // Update game history
+    updateGameHistory(resultText);
+}
+
+function updateGameHistory(resultText) {
+    const historyList = document.getElementById("history-list");
+    const listItem = document.createElement("li");
+    listItem.innerText = resultText;
+    historyList.appendChild(listItem);
+    gameHistory.push(resultText); // Store in history array
 }
 
 function playBaccarat() {
     if (currentBet <= 0) {
-        alert("Please place a bet before starting the game.");
+        document.getElementById("final-result").innerText = "Please place a bet before starting the game.";
         return;
     }
 
     const playerHand = [];
     const bankerHand = [];
 
-    document.getElementById("player-hand").innerText = "";
-    document.getElementById("banker-hand").innerText = "";
-    document.getElementById("ongoing-score").innerText = "Current Score: (Player: 0, Banker: 0)";
+    document.getElementById("player-hand").innerHTML = ""; // Clear previous hands
+    document.getElementById("banker-hand").innerHTML = "";
     document.getElementById("final-result").innerText = ""; // Reset final result message
 
+    // Deal first player card with delay
     setTimeout(() => {
         playerHand.push(drawCard());
         displayCard(playerHand, "player-hand");
-        updateOngoingScore(calculateScore(playerHand), calculateScore(bankerHand)); // Update ongoing score after first player card
     }, 1000);
 
+    // Deal first banker card with delay
     setTimeout(() => {
         bankerHand.push(drawCard());
         displayCard(bankerHand, "banker-hand");
-        updateOngoingScore(calculateScore(playerHand), calculateScore(bankerHand)); // Update ongoing score after first banker card
     }, 2000);
 
+    // Deal second player card with delay
     setTimeout(() => {
         playerHand.push(drawCard());
         displayCard(playerHand, "player-hand");
-        updateOngoingScore(calculateScore(playerHand), calculateScore(bankerHand)); // Update ongoing score after second player card
     }, 3000);
 
+    // Deal second banker card with delay
     setTimeout(() => {
         bankerHand.push(drawCard());
         displayCard(bankerHand, "banker-hand");
-        updateOngoingScore(calculateScore(playerHand), calculateScore(bankerHand)); // Update ongoing score after second banker card
     }, 4000);
 
+    // Check for third card for player with delay
     setTimeout(() => {
         if (shouldDrawThirdCard(playerHand, true)) {
             playerHand.push(drawCard());
@@ -109,9 +121,9 @@ function playBaccarat() {
         }
         const playerScore = calculateScore(playerHand);
         const bankerScore = calculateScore(bankerHand);
-        updateOngoingScore(playerScore, bankerScore); // Update ongoing score after potential third player card
     }, 5000);
 
+    // Check for third card for banker with delay
     setTimeout(() => {
         if (shouldDrawThirdCard(bankerHand, false)) {
             bankerHand.push(drawCard());
@@ -128,23 +140,17 @@ function playBaccarat() {
 }
 
 // Function to place the bet
-function placeBet() {
-    const betInput = document.getElementById("bet-amount");
-    const betAmount = parseInt(betInput.value);
-    const betType = document.querySelector('input[name="bet-type"]:checked').value; // Get the selected bet type
-
-    if (isNaN(betAmount) || betAmount <= 0 || betAmount > playerMoney) {
-        alert("Please enter a valid bet amount.");
+function placeBet(betType) {
+    if (playerMoney <= 0) {
+        document.getElementById("final-result").innerText = "You don't have enough money to place a bet.";
         return;
     }
 
-    currentBet = betAmount; // Set the current bet amount
     currentBetType = betType; // Set the current bet type
-    betInput.value = ""; // Clear the input field
-    alert(`You have placed a bet of $${currentBet} on ${currentBetType}.`);
+    document.getElementById("final-result").innerText = `You have placed a bet of Rp ${currentBet} on ${currentBetType}.`;
 }
 
-// Define the third card drawing rules (this function should be defined)
+// Define the third card drawing rules
 function shouldDrawThirdCard(hand, isPlayer) {
     const score = calculateScore(hand);
     return score <= 5; // Player draws a third card if their score is 5 or less
@@ -152,5 +158,5 @@ function shouldDrawThirdCard(hand, isPlayer) {
 
 // Start the game immediately when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    playBaccarat();
+    document.getElementById("final-result").innerText = ""; // Ensure final result is empty on load
 });
