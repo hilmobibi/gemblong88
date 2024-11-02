@@ -1,23 +1,55 @@
-<!DOCTYPE html> 
-<html>
-  <head> 
-    <title>gemblong88</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baccarat Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .card-container {
+            margin: 10px;
+        }
+        .result, .card-container {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
 
-  <body>
-    <div id ="putBetSection">
-      <button id="playerButton">player</button>
-      <button id="tieButton">tie</button>
-      <button id="bankerButton">banker</button>
+    <h1>Baccarat Game</h1>
+
+    <div class="card-container">
+        <h2>Player's Hand:</h2>
+        <div id="player-hand"></div>
     </div>
-      <p> saya bibi geming</p>
-      <p> akulah faizpurnomo</p>
-      
+
+    <div class="card-container">
+        <h2>Banker's Hand:</h2>
+        <div id="banker-hand"></div>
+    </div>
+
+    <div class="result" id="ongoing-score">Current Score: (Player: 0, Banker: 0)</div>
+    <div class="result" id="final-result"></div>
+    
+    <div>
+        <h2>Your Money: $<span id="player-money">1000</span></h2>
+        <h3>Place Your Bet:</h3>
+        <input type="number" id="bet-amount" placeholder="Enter bet amount" min="1" max="1000" />
+        <div>
+            <label><input type="radio" name="bet-type" value="player" checked> Player</label>
+            <label><input type="radio" name="bet-type" value="banker"> Banker</label>
+            <label><input type="radio" name="bet-type" value="tie"> Tie</label>
+        </div>
+        <button onclick="placeBet()">Place Bet</button>
+    </div>
+
+    <button onclick="playBaccarat()">Start New Round</button>
 
     <script src="script.js"></script>
-    </body>
-
-
-
+</body>
 </html>
