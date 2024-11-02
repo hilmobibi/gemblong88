@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crash Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #282c34;
+            color: white;
+        }
+        #multiplier {
+            font-size: 48px;
+            margin: 20px;
+        }
+        #controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Crash Game</h1>
+    <div id="multiplier">1.00</div>
+    <div id="controls">
+        <button id="start">Start Game</button>
+        <button id="cashout" disabled>Cash Out</button>
+    </div>
+    <div id="status"></div>
+
+    <script>
+        let multiplier = 1;
+        let gameInterval;
+        let isGameActive = false;
+
+        function startGame() {
+            multiplier = 1;
+            isGameActive = true;
+            document.getElementById('status').innerText = '';
+            document.getElementById('cashout').disabled = false;
+            document.getElementById('multiplier').innerText = multiplier.toFixed(2);
+            gameInterval = setInterval(() => {
+                multiplier += 0.1; // Increase the multiplier
+                document.getElementById('multiplier').innerText = multiplier.toFixed(2);
+            }, 1000);
+
+            // Simulate the crash after a random time
+            const crashTime = Math.floor(Math.random() * 5000) + 3000; // Between 3 to 8 seconds
+            setTimeout(() => {
+                if (isGameActive) {
+                    clearInterval(gameInterval);
+                    document.getElementById('cashout').disabled = true;
+                    isGameActive = false;
+                    document.getElementById('status').innerText = 'Game Crashed! You lost!';
+                }
+            }, crashTime);
+        }
+
+        function cashOut() {
+            if (isGameActive) {
+                clearInterval(gameInterval);
+                isGameActive = false;
+                document.getElementById('cashout').disabled = true;
+                document.getElementById('status').innerText = `You cashed out at ${multiplier.toFixed(2)}x!`;
+            }
+        }
+
+        document.getElementById('start').addEventListener('click', startGame);
+        document.getElementById('cashout').addEventListener('click', cashOut);
+    </script>
+</body>
+</html>
