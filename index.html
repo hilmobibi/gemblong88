@@ -3,16 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baccarat Gemblong88</title>
+    <title>Permainan Baccarat</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #2e8b57;
             color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .container {
-            margin-top: 50px;
+            margin-top: 20px;
+            flex: 1;
+        }
+        .bet-section {
+            margin-top: auto;
+            padding: 20px;
+            background-color: #3b9d63;
         }
         .bet-button {
             padding: 10px 20px;
@@ -65,25 +74,26 @@
 </head>
 <body>
     <div class="container">
-        <h1>Baccarat Gemblong88</h1>
-        <div>
-            <button class="bet-button" onclick="placeBet('Player')">Pemain</button>
-            <button class="bet-button" onclick="placeBet('Banker')">Banker</button>
-            <button class="bet-button" onclick="placeBet('Tie')">Seri</button>
-        </div>
+        <h1>Permainan Baccarat</h1>
         <div id="result"></div>
         <div class="hands-container">
             <div class="hand">
-                <div id="player-hand">Pemain:</div>
+                <div id="player-hand">Tangan Pemain:</div>
                 <div id="player-cards" class="card-images"></div>
-                <div id="player-score" class="score"></div>
+                <div id="player-score" class="score">Skor: 0</div>
             </div>
             <div class="hand">
-                <div id="banker-hand">Banker:</div>
+                <div id="banker-hand">Tangan Banker:</div>
                 <div id="banker-cards" class="card-images"></div>
-                <div id="banker-score" class="score"></div>
+                <div id="banker-score" class="score">Skor: 0</div>
             </div>
         </div>
+    </div>
+
+    <div class="bet-section">
+        <button class="bet-button" onclick="placeBet('Player')">Taruhan pada Pemain</button>
+        <button class="bet-button" onclick="placeBet('Banker')">Taruhan pada Banker</button>
+        <button class="bet-button" onclick="placeBet('Tie')">Taruhan pada Seri</button>
     </div>
 
     <script>
@@ -133,8 +143,8 @@
 
             document.getElementById("player-cards").innerHTML = '';
             document.getElementById("banker-cards").innerHTML = '';
-            document.getElementById("player-score").innerHTML = '';
-            document.getElementById("banker-score").innerHTML = '';
+            document.getElementById("player-score").innerHTML = 'Skor: 0';
+            document.getElementById("banker-score").innerHTML = 'Skor: 0';
             document.getElementById("result").innerHTML = '';
 
             // Reveal player and banker cards with delay
@@ -164,13 +174,9 @@
                 cardImage.className = `card-image ${positionClass}`;
                 document.getElementById(elementId).appendChild(cardImage);
 
-                // Update the score after both cards are revealed
-                if (hand.length === 2) {
-                    setTimeout(() => {
-                        const score = calculateScore(hand);
-                        document.getElementById(scoreId).innerHTML = `Skor: ${score}`;
-                    }, 500);
-                }
+                // Update the score in real-time
+                const score = calculateScore(hand);
+                document.getElementById(scoreId).innerHTML = `Skor: ${score}`;
             }, delay);
         }
 
@@ -185,11 +191,11 @@
 
         function determineWinner(playerScore, bankerScore) {
             if (playerScore > bankerScore) {
-                return 'Pemain menang';
+                return 'Pemain menang!';
             } else if (bankerScore > playerScore) {
-                return 'Banker menang';
+                return 'Banker menang!';
             } else {
-                return 'Seri';
+                return 'Seri!';
             }
         }
     </script>
