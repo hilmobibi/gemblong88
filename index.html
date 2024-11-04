@@ -74,25 +74,36 @@
 
         function startGame() {
             initializeDeck();
-            playerHand = drawHand();
-            bankerHand = drawHand();
+            playerHand = [];
+            bankerHand = [];
 
-            const playerScore = calculateScore(playerHand);
-            const bankerScore = calculateScore(bankerHand);
+            document.getElementById("player-hand").innerHTML = 'Player Hand: ';
+            document.getElementById("banker-hand").innerHTML = 'Banker Hand: ';
+            document.getElementById("result").innerHTML = '';
 
-            document.getElementById("player-hand").innerHTML = `Player Hand: ${playerHand.join(", ")} (Score: ${playerScore})`;
-            document.getElementById("banker-hand").innerHTML = `Banker Hand: ${bankerHand.join(", ")} (Score: ${bankerScore})`;
+            // Reveal player and banker cards with delay
+            drawAndRevealCard(playerHand, "player-hand", 0);
+            drawAndRevealCard(bankerHand, "banker-hand", 1000);
+            drawAndRevealCard(playerHand, "player-hand", 2000);
+            drawAndRevealCard(bankerHand, "banker-hand", 3000);
 
-            let result = determineWinner(playerScore, bankerScore);
-            document.getElementById("result").innerHTML = result;
+            // Show result after all cards are revealed
+            setTimeout(() => {
+                const playerScore = calculateScore(playerHand);
+                const bankerScore = calculateScore(bankerHand);
+
+                let result = determineWinner(playerScore, bankerScore);
+                document.getElementById("result").innerHTML = result;
+            }, 4000);
         }
 
-        function drawHand() {
-            let hand = [];
-            for (let i = 0; i < 2; i++) {
-                hand.push(drawCard());
-            }
-            return hand;
+        function drawAndRevealCard(hand, elementId, delay) {
+            setTimeout(() => {
+                const card = drawCard();
+                hand.push(card);
+                const score = calculateScore(hand);
+                document.getElementById(elementId).innerHTML = `${elementId === "player-hand" ? "Player Hand" : "Banker Hand"}: ${hand.join(", ")} (Score: ${score})`;
+            }, delay);
         }
 
         function drawCard() {
