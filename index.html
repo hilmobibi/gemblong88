@@ -3,83 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crash Game</title>
+    <title>Baccarat Game</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #282c34;
-            color: white;
+            text-align: center;
+            background-color: #2e8b57;
+            color: #fff;
         }
-        #multiplier {
-            font-size: 48px;
-            margin: 20px;
+        .container {
+            margin-top: 50px;
         }
-        #controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        button {
+        .bet-button {
             padding: 10px 20px;
-            margin: 5px;
-            font-size: 16px;
+            margin: 10px;
+            font-size: 18px;
             cursor: pointer;
+            border: none;
+            color: #fff;
+            background-color: #4CAF50;
+        }
+        #result, #player-hand, #banker-hand {
+            margin: 20px;
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Crash Game</h1>
-    <div id="multiplier">1.00</div>
-    <div id="controls">
-        <button id="start">Start Game</button>
-        <button id="cashout" disabled>Cash Out</button>
+    <div class="container">
+        <h1>Baccarat Game</h1>
+        <div>
+            <button class="bet-button" onclick="placeBet('Player')">Bet on Player</button>
+            <button class="bet-button" onclick="placeBet('Banker')">Bet on Banker</button>
+            <button class="bet-button" onclick="placeBet('Tie')">Bet on Tie</button>
+        </div>
+        <div id="result"></div>
+        <div id="player-hand"></div>
+        <div id="banker-hand"></div>
     </div>
-    <div id="status"></div>
 
     <script>
-        let multiplier = 1;
-        let gameInterval;
-        let isGameActive = false;
+        let playerHand = [];
+        let bankerHand = [];
+        let playerBet = '';
+
+        function placeBet(bet) {
+            playerBet = bet;
+            startGame();
+        }
 
         function startGame() {
-            multiplier = 1;
-            isGameActive = true;
-            document.getElementById('status').innerText = '';
-            document.getElementById('cashout').disabled = false;
-            document.getElementById('multiplier').innerText = multiplier.toFixed(2);
-            gameInterval = setInterval(() => {
-                multiplier += 0.1; // Increase the multiplier
-                document.getElementById('multiplier').innerText = multiplier.toFixed(2);
-            }, 1000);
+            playerHand = drawHand();
+            bankerHand = drawHand();
 
-            // Simulate the crash after a random time
-            const crashTime = Math.floor(Math.random() * 5000) + 3000; // Between 3 to 8 seconds
-            setTimeout(() => {
-                if (isGameActive) {
-                    clearInterval(gameInterval);
-                    document.getElementById('cashout').disabled = true;
-                    isGameActive = false;
-                    document.getElementById('status').innerText = 'Game Crashed! You lost!';
-                }
-            }, crashTime);
+            const playerScore = calculateScore(playerHand);
+            const bankerScore = calculateScore(bankerHand);
+
+            document.getElementById("player-hand").innerHTML = `Player Hand: ${playerHand.join(", ")} (Score: ${playerScore})`;
+            document.getElementById("banker-hand").innerHTML = `Banker Hand: ${bankerHand.join(", ")} (Score: ${bankerScore})`;
+
+            let result = determineWinner(playerScore, bankerScore);
+            document.getElementById("result").innerHTML = result;
         }
 
-        function cashOut() {
-            if (isGameActive) {
-                clearInterval(gameInterval);
-                isGameActive = false;
-                document.getElementById('cashout').disabled = true;
-                document.getElementById('status').innerText = `You cashed out at ${multiplier.toFixed(2)}x!`;
+        function drawHand() {
+            let hand = [];
+            for (let i = 0; i < 2; i++) {
+                hand.push(drawCard());
+            }
+            return hand;
+        }
+
+        function drawCard() {
+            return Math.floor(Math.random() * 10) + 1; // Generate card between 1 and 10
+        }
+
+        function calculateScore(hand) {
+            let total = hand.reduce((sum, card) => sum + card, 0);
+            return total % 10; // Baccarat score is the last digit of the sum
+        }
+
+        function determineWinner(playerScore, bankerScore) {
+            let winner = '';
+            if (playerScore > bankerScore) {
+                winner = 'Player';
+            } else if (bankerScore > playerScore) {
+                winner = 'Banker';
+            } else {
+                winner = 'Tie';
+            }
+
+            if (playerBet === winner) {
+                return `You bet on ${playerBet} and won!`;
+            } else {
+                return `You bet on ${playerBet} but lost. ${winner} wins.`;
             }
         }
-
-        document.getElementById('start').addEventListener('click', startGame);
-        document.getElementById('cashout').addEventListener('click', cashOut);
     </script>
 </body>
 </html>
