@@ -32,10 +32,15 @@
         .hand {
             font-size: 20px;
         }
+        .card-images {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
         .card-image {
-            width: 60px;
+            width: 40px; /* Make the card images smaller */
             height: auto;
-            margin: 5px;
         }
         #result {
             margin: 20px;
@@ -54,8 +59,14 @@
         </div>
         <div id="result"></div>
         <div class="hands-container">
-            <div id="player-hand" class="hand">Player Hand:</div>
-            <div id="banker-hand" class="hand">Banker Hand:</div>
+            <div class="hand">
+                <div id="player-hand">Player Hand:</div>
+                <div id="player-cards" class="card-images"></div>
+            </div>
+            <div class="hand">
+                <div id="banker-hand">Banker Hand:</div>
+                <div id="banker-cards" class="card-images"></div>
+            </div>
         </div>
     </div>
 
@@ -104,15 +115,15 @@
             playerHand = [];
             bankerHand = [];
 
-            document.getElementById("player-hand").innerHTML = 'Player Hand: ';
-            document.getElementById("banker-hand").innerHTML = 'Banker Hand: ';
+            document.getElementById("player-cards").innerHTML = '';
+            document.getElementById("banker-cards").innerHTML = '';
             document.getElementById("result").innerHTML = '';
 
             // Reveal player and banker cards with delay
-            drawAndRevealCard(playerHand, "player-hand", 0);
-            drawAndRevealCard(bankerHand, "banker-hand", 1000);
-            drawAndRevealCard(playerHand, "player-hand", 2000);
-            drawAndRevealCard(bankerHand, "banker-hand", 3000);
+            drawAndRevealCard(playerHand, "player-cards", 0);
+            drawAndRevealCard(bankerHand, "banker-cards", 1000);
+            drawAndRevealCard(playerHand, "player-cards", 2000);
+            drawAndRevealCard(bankerHand, "banker-cards", 3000);
 
             // Show result after all cards are revealed
             setTimeout(() => {
@@ -128,14 +139,13 @@
             setTimeout(() => {
                 const card = drawCard();
                 hand.push(card);
-                const handElement = document.getElementById(elementId);
-                
+
                 // Create an img element for the card
                 const cardImage = document.createElement("img");
                 cardImage.src = card.image;
                 cardImage.className = "card-image";
-                
-                handElement.appendChild(cardImage);
+
+                document.getElementById(elementId).appendChild(cardImage);
             }, delay);
         }
 
