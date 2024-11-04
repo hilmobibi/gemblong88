@@ -86,44 +86,55 @@
             margin:  10px;
         }
         .bbplayer {
-            background-color: rgb(0, 0, 200);
+            background: linear-gradient(to bottom left, #87CEEB, #1E90FF); /* Light blue to dark blue gradient */
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
             border: none;
             color: #fff;
-            margin:  10px;
+            margin: 10px;
+            border-radius: 5px; /* Optional: Adds rounded corners */
         }
+
         .bbtie {
-            background-color: rgb(0, 200, 0);
+            background: linear-gradient(to bottom, #90EE90, #228B22); /* Light green to dark green gradient */
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
             border: none;
             color: #fff;
-            margin:  10px;
+            margin: 10px;
+            border-radius: 5px; /* Optional: Adds rounded corners */
         }
+
         .bbbanker {
-            background-color: rgb(200, 0, 0);
+            background: linear-gradient(to bottom right, #FF6347, #B22222); /* Light red to dark red gradient */
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
             border: none;
             color: #fff;
-            margin:  10px;
+            margin: 10px;
+            border-radius: 5px; /* Optional: Adds rounded corners */
         }
+
         #balance, #bet-amount {
             font-size: 18px;
             font-weight: bold;
             display: inline;
             margin: 20px;
         }
+        .win-amount {
+            font-size: 16px;
+            margin-top: 10px;
+            color: gold; /* Change the color to gold */
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Baccarat Gemblong88</h1>
-        <div id="result"></div>
+        
         <div class="hands-container">
             <div class="hand">
                 <div id="player-hand">Pemain:</div>
@@ -137,7 +148,7 @@
             </div>
         </div>
     </div>
-
+    <div id="result"></div>
     <div class="coin-container">
         <button class="coin" onclick="selectBetAmount(2000)">2K</button>
         <button class="coin" onclick="selectBetAmount(5000)">5K</button>
@@ -148,9 +159,18 @@
     </div>
 
     <div class="bottomSection">
-        <button class="bbplayer" onclick="placeBet('Player')">Pemain</button>
-        <button class="bbtie" onclick="placeBet('Tie')">Seri</button>
-        <button class="bbbanker" onclick="placeBet('Banker')">Banker</button>
+        <button class="bbplayer" onclick="placeBet('Player')">
+            <span style="display: block;">Pemain</span>
+            <span>2:1</span>
+        </button>
+        <button class="bbtie" onclick="placeBet('Tie')">
+            <span style="display: block;">Seri</span>
+            <span>8:1</span>
+        </button>
+        <button class="bbbanker" onclick="placeBet('Banker')">
+            <span style="display: block;">Banker</span>
+            <span>1.95:1</span>
+        </button>
         <div class="money-section">
             <div id="balance">Saldo: Rp 10.000</div>
             <div id="bet-amount">Taruhan: Rp 0</div>
@@ -240,20 +260,36 @@
                 const bankerScore = calculateScore(bankerHand);
 
                 let result = determineWinner(playerScore, bankerScore);
+                let winAmount = 0;
+
                 document.getElementById("result").innerHTML = result;
 
                 // Tambah saldo berdasarkan hasil
                 if (result === 'Pemain menang' && playerBet === 'Player') {
-                    balance += betAmount * 2; // Pemain menang
+                    winAmount = betAmount * 2; // Pemain menang
+                    balance += winAmount;
                 } else if (result === 'Banker menang' && playerBet === 'Banker') {
-                    balance += betAmount * 1.95; // Banker menang
+                    winAmount = betAmount * 1.95; // Banker menang
+                    balance += winAmount;
                 } else if (result === 'Seri' && playerBet === 'Tie') {
-                    balance += betAmount * 8; // Seri
+                    winAmount = betAmount * 8; // Seri
+                    balance += winAmount;
                 } else if (result === 'Seri' && (playerBet === 'Player' || playerBet === 'Banker')) {
                     balance += betAmount; // Kembalikan saldo jika hasilnya Seri dan taruhan bukan di Tie
                 }
 
                 updateBalanceDisplay();
+
+                if (winAmount > 0) {
+                    const winAmountDisplay = document.createElement("div");
+                    winAmountDisplay.className = "win-amount";
+                    winAmountDisplay.innerHTML = `Uang yang didapat: Rp ${formatCurrency(winAmount)}`;
+                    document.getElementById("result").appendChild(winAmountDisplay);
+                }
+
+                setTimeout(() => {
+                    document.getElementById("result").innerHTML = '';
+                }, 2000);
             }, 4000);
         }
 
