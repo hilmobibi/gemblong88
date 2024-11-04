@@ -73,6 +73,11 @@
 <body>
     <div class="container">
         <h1>Baccarat Gemblong88</h1>
+        <div id="balance">Saldo: Rp 100000</div>
+        <div>
+            <label for="bet-amount">Taruhan (RP): </label>
+            <input type="number" id="bet-amount" value="1000" min="1000" step="1000">
+        </div>
         <div id="result"></div>
         <div class="hands-container">
             <div class="hand">
@@ -99,6 +104,7 @@
         let playerHand = [];
         let bankerHand = [];
         let playerBet = '';
+        let balance = 100000; // initial balance
 
         function initializeDeck() {
             deck = [];
@@ -130,11 +136,22 @@
         }
 
         function placeBet(bet) {
+            const betAmount = parseInt(document.getElementById("bet-amount").value);
+            if (betAmount > balance) {
+                alert("Saldo tidak mencukupi untuk taruhan ini.");
+                return;
+            }
             playerBet = bet;
-            startGame();
+            balance -= betAmount;
+            updateBalanceDisplay();
+            startGame(betAmount);
         }
 
-        function startGame() {
+        function updateBalanceDisplay() {
+            document.getElementById("balance").innerHTML = `Saldo: Rp ${balance}`;
+        }
+
+        function startGame(betAmount) {
             initializeDeck();
             playerHand = [];
             bankerHand = [];
@@ -145,19 +162,22 @@
             document.getElementById("player-cumulative-score").innerHTML = 'Skor: 0';
             document.getElementById("banker-cumulative-score").innerHTML = 'Skor: 0';
 
-            // Reveal player and banker cards with delay
             drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score");
             setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 1000);
             setTimeout(() => drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score"), 2000);
             setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 3000);
 
-            // Show result after all cards are revealed
             setTimeout(() => {
                 const playerScore = calculateScore(playerHand);
                 const bankerScore = calculateScore(bankerHand);
 
                 let result = determineWinner(playerScore, bankerScore);
                 document.getElementById("result").innerHTML = result;
+
+                if (result.includes(playerBet)) {
+                    balance += betAmount * (playerBet === 'Tie' ? 8 : 2);
+                    updateBalanceDisplay();
+                }
             }, 4000);
         }
 
@@ -165,18 +185,15 @@
             const card = drawCard();
             hand.push(card);
 
-            // Create container for card image
             const cardContainer = document.createElement("div");
             cardContainer.className = "card-image-container";
 
-            // Create an img element for the card
             const cardImage = document.createElement("img");
             cardImage.src = card.image;
             cardImage.className = "card-image";
             cardContainer.appendChild(cardImage);
             document.getElementById(elementId).appendChild(cardContainer);
 
-            // Delay score update to show cumulative score after card appears
             setTimeout(() => {
                 const cumulativeScore = calculateScore(hand);
                 document.getElementById(scoreId).innerHTML = `Skor: ${cumulativeScore}`;
