@@ -26,11 +26,16 @@
         .hands-container {
             display: flex;
             justify-content: center;
-            gap: 40px; /* Spacing between player and banker hands */
+            gap: 40px;
             margin-top: 20px;
         }
         .hand {
             font-size: 20px;
+        }
+        .card-image {
+            width: 60px;
+            height: auto;
+            margin: 5px;
         }
         #result {
             margin: 20px;
@@ -62,11 +67,21 @@
 
         function initializeDeck() {
             deck = [];
-            const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
-            const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]; // Face cards count as 10
+            const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
+            const values = [
+                { name: 'ace', value: 1 }, { name: '2', value: 2 }, { name: '3', value: 3 },
+                { name: '4', value: 4 }, { name: '5', value: 5 }, { name: '6', value: 6 },
+                { name: '7', value: 7 }, { name: '8', value: 8 }, { name: '9', value: 9 },
+                { name: '10', value: 10 }, { name: 'jack', value: 10 },
+                { name: 'queen', value: 10 }, { name: 'king', value: 10 }
+            ];
             for (let suit of suits) {
                 for (let value of values) {
-                    deck.push(value);
+                    deck.push({
+                        value: value.value,
+                        suit: suit,
+                        image: `cards/${value.name}_of_${suit}.png`
+                    });
                 }
             }
             shuffleDeck();
@@ -113,8 +128,14 @@
             setTimeout(() => {
                 const card = drawCard();
                 hand.push(card);
-                const score = calculateScore(hand);
-                document.getElementById(elementId).innerHTML = `${elementId === "player-hand" ? "Player Hand" : "Banker Hand"}: ${hand.join(", ")} (Score: ${score})`;
+                const handElement = document.getElementById(elementId);
+                
+                // Create an img element for the card
+                const cardImage = document.createElement("img");
+                cardImage.src = card.image;
+                cardImage.className = "card-image";
+                
+                handElement.appendChild(cardImage);
             }, delay);
         }
 
@@ -123,24 +144,17 @@
         }
 
         function calculateScore(hand) {
-            let total = hand.reduce((sum, card) => sum + card, 0);
+            let total = hand.reduce((sum, card) => sum + card.value, 0);
             return total % 10; // Baccarat score is the last digit of the sum
         }
 
         function determineWinner(playerScore, bankerScore) {
-            let winner = '';
             if (playerScore > bankerScore) {
-                winner = 'Player';
+                return 'Player wins!';
             } else if (bankerScore > playerScore) {
-                winner = 'Banker';
+                return 'Banker wins!';
             } else {
-                winner = 'Tie';
-            }
-
-            if (playerBet === winner) {
-                return `You bet on ${playerBet} and won!`;
-            } else {
-                return `You bet on ${playerBet} but lost. ${winner} wins.`;
+                return 'It\'s a Tie!';
             }
         }
     </script>
