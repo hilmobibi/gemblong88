@@ -43,9 +43,29 @@
     </div>
 
     <script>
+        let deck = [];
         let playerHand = [];
         let bankerHand = [];
         let playerBet = '';
+
+        function initializeDeck() {
+            deck = [];
+            const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
+            const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]; // Face cards count as 10
+            for (let suit of suits) {
+                for (let value of values) {
+                    deck.push(value);
+                }
+            }
+            shuffleDeck();
+        }
+
+        function shuffleDeck() {
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+        }
 
         function placeBet(bet) {
             playerBet = bet;
@@ -53,6 +73,7 @@
         }
 
         function startGame() {
+            initializeDeck();
             playerHand = drawHand();
             bankerHand = drawHand();
 
@@ -75,7 +96,7 @@
         }
 
         function drawCard() {
-            return Math.floor(Math.random() * 10) + 1; // Generate card between 1 and 10
+            return deck.pop(); // Draws the top card from the shuffled deck
         }
 
         function calculateScore(hand) {
