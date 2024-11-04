@@ -68,16 +68,36 @@
             font-size: 22px;
             font-weight: bold;
         }
+        .coin-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .coin {
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #fff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #balance, #bet-amount {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Baccarat Gemblong88</h1>
-        <div id="balance">Saldo: Rp 100000</div>
-        <div>
-            <label for="bet-amount">Taruhan (RP): </label>
-            <input type="number" id="bet-amount" value="1000" min="1000" step="1000">
-        </div>
         <div id="result"></div>
         <div class="hands-container">
             <div class="hand">
@@ -91,6 +111,14 @@
                 <div id="banker-cumulative-score" class="cumulative-score">Skor: 0</div>
             </div>
         </div>
+        <div class="coin-container">
+            <button class="coin" onclick="selectBetAmount(2000)">2K</button>
+            <button class="coin" onclick="selectBetAmount(5000)">5K</button>
+            <button class="coin" onclick="selectBetAmount(10000)">10K</button>
+            <button class="coin" onclick="selectBetAmount(20000)">20K</button>
+            <button class="coin" onclick="selectBetAmount(50000)">50K</button>
+            <button class="coin" onclick="selectBetAmount(100000)">100K</button>
+        </div>
     </div>
 
     <div class="bet-buttons">
@@ -99,12 +127,16 @@
         <button class="bet-button" onclick="placeBet('Banker')">Taruhan pada Banker</button>
     </div>
 
+    <div id="balance">Saldo: Rp 100000</div>
+    <div id="bet-amount">Taruhan: Rp 0</div>
+
     <script>
         let deck = [];
         let playerHand = [];
         let bankerHand = [];
         let playerBet = '';
         let balance = 100000; // initial balance
+        let betAmount = 0; // selected bet amount
 
         function initializeDeck() {
             deck = [];
@@ -135,8 +167,13 @@
             }
         }
 
+        function selectBetAmount(amount) {
+            betAmount = amount;
+            document.getElementById("bet-amount").innerHTML = `Taruhan: Rp ${amount}`;
+            document.getElementById("result").innerHTML = ''; // Clear result when selecting a new bet
+        }
+
         function placeBet(bet) {
-            const betAmount = parseInt(document.getElementById("bet-amount").value);
             if (betAmount > balance) {
                 alert("Saldo tidak mencukupi untuk taruhan ini.");
                 return;
@@ -166,7 +203,6 @@
             setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 1000);
             setTimeout(() => drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score"), 2000);
             setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 3000);
-
             setTimeout(() => {
                 const playerScore = calculateScore(playerHand);
                 const bankerScore = calculateScore(bankerHand);
@@ -174,11 +210,20 @@
                 let result = determineWinner(playerScore, bankerScore);
                 document.getElementById("result").innerHTML = result;
 
-                if (result.includes(playerBet)) {
-                    balance += betAmount * (playerBet === 'Tie' ? 8 : 2);
-                    updateBalanceDisplay();
+                // Tambah saldo berdasarkan hasil
+                if (result === 'Pemain menang' && playerBet === 'Player') {
+                    balance += betAmount * 2; // Pemain menang
+                } else if (result === 'Banker menang' && playerBet === 'Banker') {
+                    balance += betAmount * 1.95; // Banker menang
+                } else if (result === 'Seri' && playerBet === 'Tie') {
+                    balance += betAmount * 8; // Seri
+                } else if (result === 'Seri' && (playerBet === 'Player' || playerBet === 'Banker')) {
+                    balance += betAmount; // Kembalikan saldo jika hasilnya Seri dan taruhan bukan di Tie
                 }
+    
+                updateBalanceDisplay();
             }, 4000);
+
         }
 
         function drawAndRevealCard(hand, elementId, scoreId) {
