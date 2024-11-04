@@ -168,10 +168,10 @@
 
 
         #balance, #bet-amount {
-            font-size: 18px;
+            font-size: 15px;
             font-weight: bold;
             display: inline;
-            margin: 20px;
+            margin: 2px;
         }
         .win-amount {
             font-size: 16px;
@@ -291,57 +291,61 @@
         }
 
         function startGame(betAmount) {
-            initializeDeck();
-            playerHand = [];
-            bankerHand = [];
+    initializeDeck();
+    playerHand = [];
+    bankerHand = [];
 
-            document.getElementById("player-cards").innerHTML = '';
-            document.getElementById("banker-cards").innerHTML = '';
-            document.getElementById("result").innerHTML = '';
-            document.getElementById("player-cumulative-score").innerHTML = 'Skor: 0';
-            document.getElementById("banker-cumulative-score").innerHTML = 'Skor: 0';
+    document.getElementById("player-cards").innerHTML = '';
+    document.getElementById("banker-cards").innerHTML = '';
+    document.getElementById("result").innerHTML = '';
+    document.getElementById("player-cumulative-score").innerHTML = 'Skor: 0';
+    document.getElementById("banker-cumulative-score").innerHTML = 'Skor: 0';
 
-            drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score");
-            setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 1000);
-            setTimeout(() => drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score"), 2000);
-            setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 3000);
-            setTimeout(() => {
-                const playerScore = calculateScore(playerHand);
-                const bankerScore = calculateScore(bankerHand);
+    drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score");
+    setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 1000);
+    setTimeout(() => drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score"), 2000);
+    setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 3000);
+    setTimeout(() => {
+        const playerScore = calculateScore(playerHand);
+        const bankerScore = calculateScore(bankerHand);
 
-                let result = determineWinner(playerScore, bankerScore);
-                let winAmount = 0;
+        let result = determineWinner(playerScore, bankerScore);
+        let winAmount = 0;
 
-                document.getElementById("result").innerHTML = result;
+        document.getElementById("result").innerHTML = result;
 
-                // Tambah saldo berdasarkan hasil
-                if (result === 'Pemain menang' && playerBet === 'Player') {
-                    winAmount = betAmount * 2; // Pemain menang
-                    balance += winAmount;
-                } else if (result === 'Banker menang' && playerBet === 'Banker') {
-                    winAmount = betAmount * 1.95; // Banker menang
-                    balance += winAmount;
-                } else if (result === 'Seri' && playerBet === 'Tie') {
-                    winAmount = betAmount * 8; // Seri
-                    balance += winAmount;
-                } else if (result === 'Seri' && (playerBet === 'Player' || playerBet === 'Banker')) {
-                    balance += betAmount; // Kembalikan saldo jika hasilnya Seri dan taruhan bukan di Tie
-                }
-
-                updateBalanceDisplay();
-
-                if (winAmount > 0) {
-                    const winAmountDisplay = document.createElement("div");
-                    winAmountDisplay.className = "win-amount";
-                    winAmountDisplay.innerHTML = `Uang yang didapat: Rp ${formatCurrency(winAmount)}`;
-                    document.getElementById("result").appendChild(winAmountDisplay);
-                }
-
-                setTimeout(() => {
-                    document.getElementById("result").innerHTML = '';
-                }, 2000);
-            }, 4000);
+        // Tambah saldo berdasarkan hasil
+        if (result === 'Pemain menang' && playerBet === 'Player') {
+            winAmount = betAmount * 2; // Pemain menang
+            balance += winAmount;
+        } else if (result === 'Banker menang' && playerBet === 'Banker') {
+            winAmount = betAmount * 1.95; // Banker menang
+            balance += winAmount;
+        } else if (result === 'Seri' && playerBet === 'Tie') {
+            winAmount = betAmount * 8; // Seri
+            balance += winAmount;
+        } else if (result === 'Seri' && (playerBet === 'Player' || playerBet === 'Banker')) {
+            // Kembalikan saldo jika hasilnya Seri dan taruhan bukan di Tie
+            balance += betAmount; 
+            winAmount = betAmount; // Set winAmount to the returned bet amount for display
         }
+
+        updateBalanceDisplay();
+
+        if (winAmount > 0) {
+            const winAmountDisplay = document.createElement("div");
+            winAmountDisplay.className = "win-amount";
+            winAmountDisplay.innerHTML = `Uang yang didapat: Rp ${formatCurrency(winAmount)}`;
+            document.getElementById("result").appendChild(winAmountDisplay);
+        }
+
+        setTimeout(() => {
+            document.getElementById("result").innerHTML = '';
+        }, 2000);
+    }, 4000);
+}
+
+        
 
         function drawAndRevealCard(hand, elementId, scoreId) {
             const card = drawCard();
