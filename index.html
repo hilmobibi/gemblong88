@@ -58,9 +58,9 @@
             height: auto;
             transition: transform 0.5s ease;
         }
-        .score {
-            margin-top: 5px;
-            font-size: 16px;
+        .cumulative-score {
+            margin-top: 20px;
+            font-size: 18px;
             font-weight: bold;
         }
         #result {
@@ -78,10 +78,12 @@
             <div class="hand">
                 <div id="player-hand">Pemain:</div>
                 <div id="player-cards" class="card-images"></div>
+                <div id="player-cumulative-score" class="cumulative-score">Skor: 0</div>
             </div>
             <div class="hand">
                 <div id="banker-hand">Banker:</div>
                 <div id="banker-cards" class="card-images"></div>
+                <div id="banker-cumulative-score" class="cumulative-score">Skor: 0</div>
             </div>
         </div>
     </div>
@@ -140,12 +142,14 @@
             document.getElementById("player-cards").innerHTML = '';
             document.getElementById("banker-cards").innerHTML = '';
             document.getElementById("result").innerHTML = '';
+            document.getElementById("player-cumulative-score").innerHTML = 'Skor: 0';
+            document.getElementById("banker-cumulative-score").innerHTML = 'Skor: 0';
 
             // Reveal player and banker cards with delay
-            drawAndRevealCard(playerHand, "player-cards");
-            setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards"), 1000);
-            setTimeout(() => drawAndRevealCard(playerHand, "player-cards"), 2000);
-            setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards"), 3000);
+            drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score");
+            setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 1000);
+            setTimeout(() => drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score"), 2000);
+            setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 3000);
 
             // Show result after all cards are revealed
             setTimeout(() => {
@@ -157,11 +161,11 @@
             }, 4000);
         }
 
-        function drawAndRevealCard(hand, elementId) {
+        function drawAndRevealCard(hand, elementId, scoreId) {
             const card = drawCard();
             hand.push(card);
 
-            // Create container for card image and score
+            // Create container for card image
             const cardContainer = document.createElement("div");
             cardContainer.className = "card-image-container";
 
@@ -170,14 +174,13 @@
             cardImage.src = card.image;
             cardImage.className = "card-image";
             cardContainer.appendChild(cardImage);
-
-            // Create a score element under each card
-            const cardScore = document.createElement("div");
-            cardScore.className = "score";
-            cardScore.innerHTML = card.value;
-            cardContainer.appendChild(cardScore);
-
             document.getElementById(elementId).appendChild(cardContainer);
+
+            // Delay score update to show cumulative score after card appears
+            setTimeout(() => {
+                const cumulativeScore = calculateScore(hand);
+                document.getElementById(scoreId).innerHTML = `Skor: ${cumulativeScore}`;
+            }, 500);
         }
 
         function drawCard() {
