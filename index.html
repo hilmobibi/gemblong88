@@ -31,16 +31,26 @@
         }
         .hand {
             font-size: 20px;
+            position: relative;
+            width: 150px;
         }
         .card-images {
             display: flex;
+            position: relative;
             justify-content: center;
-            gap: 5px;
             margin-top: 10px;
         }
         .card-image {
-            width: 40px; /* Make the card images smaller */
+            width: 40px;
             height: auto;
+            position: absolute;
+            transition: transform 0.5s ease; /* Smooth transition for moving cards */
+        }
+        .card-left {
+            transform: translateX(-20px); /* Move left card slightly to the left */
+        }
+        .card-right {
+            transform: translateX(20px); /* Move right card slightly to the right */
         }
         #result {
             margin: 20px;
@@ -120,10 +130,10 @@
             document.getElementById("result").innerHTML = '';
 
             // Reveal player and banker cards with delay
-            drawAndRevealCard(playerHand, "player-cards", 0);
-            drawAndRevealCard(bankerHand, "banker-cards", 1000);
-            drawAndRevealCard(playerHand, "player-cards", 2000);
-            drawAndRevealCard(bankerHand, "banker-cards", 3000);
+            drawAndRevealCard(playerHand, "player-cards", 0, "card-left");
+            drawAndRevealCard(bankerHand, "banker-cards", 1000, "card-left");
+            drawAndRevealCard(playerHand, "player-cards", 2000, "card-right");
+            drawAndRevealCard(bankerHand, "banker-cards", 3000, "card-right");
 
             // Show result after all cards are revealed
             setTimeout(() => {
@@ -135,7 +145,7 @@
             }, 4000);
         }
 
-        function drawAndRevealCard(hand, elementId, delay) {
+        function drawAndRevealCard(hand, elementId, delay, positionClass) {
             setTimeout(() => {
                 const card = drawCard();
                 hand.push(card);
@@ -143,7 +153,7 @@
                 // Create an img element for the card
                 const cardImage = document.createElement("img");
                 cardImage.src = card.image;
-                cardImage.className = "card-image";
+                cardImage.className = `card-image ${positionClass}`;
 
                 document.getElementById(elementId).appendChild(cardImage);
             }, delay);
