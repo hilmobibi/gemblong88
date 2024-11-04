@@ -3,29 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Permainan Baccarat</title>
+    <title>Baccarat Gemblong88</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #2e8b57;
             color: #fff;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
         }
         .container {
-            margin-top: 20px;
-            flex: 1;
+            margin-top: 50px;
         }
-        .bet-section {
-            margin-top: auto;
-            padding: 20px;
-            background-color: #3b9d63;
+        .bet-buttons {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #2e8b57;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
         }
         .bet-button {
             padding: 10px 20px;
-            margin: 10px;
             font-size: 18px;
             cursor: pointer;
             border: none;
@@ -35,7 +35,7 @@
         .hands-container {
             display: flex;
             justify-content: center;
-            gap: 40px;
+            gap: 60px;
             margin-top: 20px;
         }
         .hand {
@@ -48,22 +48,20 @@
             position: relative;
             justify-content: center;
             margin-top: 10px;
+            gap: 10px;
+        }
+        .card-image-container {
+            position: relative;
         }
         .card-image {
-            width: 40px;
+            width: 60px;
             height: auto;
-            position: absolute;
             transition: transform 0.5s ease;
         }
-        .card-left {
-            transform: translateX(-20px);
-        }
-        .card-right {
-            transform: translateX(20px);
-        }
         .score {
-            margin-top: 10px;
-            font-size: 18px;
+            margin-top: 5px;
+            font-size: 16px;
+            font-weight: bold;
         }
         #result {
             margin: 20px;
@@ -74,26 +72,24 @@
 </head>
 <body>
     <div class="container">
-        <h1>Permainan Baccarat</h1>
+        <h1>Baccarat Gemblong88</h1>
         <div id="result"></div>
         <div class="hands-container">
             <div class="hand">
-                <div id="player-hand">Tangan Pemain:</div>
+                <div id="player-hand">Pemain:</div>
                 <div id="player-cards" class="card-images"></div>
-                <div id="player-score" class="score">Skor: 0</div>
             </div>
             <div class="hand">
-                <div id="banker-hand">Tangan Banker:</div>
+                <div id="banker-hand">Banker:</div>
                 <div id="banker-cards" class="card-images"></div>
-                <div id="banker-score" class="score">Skor: 0</div>
             </div>
         </div>
     </div>
 
-    <div class="bet-section">
+    <div class="bet-buttons">
         <button class="bet-button" onclick="placeBet('Player')">Taruhan pada Pemain</button>
-        <button class="bet-button" onclick="placeBet('Banker')">Taruhan pada Banker</button>
         <button class="bet-button" onclick="placeBet('Tie')">Taruhan pada Seri</button>
+        <button class="bet-button" onclick="placeBet('Banker')">Taruhan pada Banker</button>
     </div>
 
     <script>
@@ -143,15 +139,13 @@
 
             document.getElementById("player-cards").innerHTML = '';
             document.getElementById("banker-cards").innerHTML = '';
-            document.getElementById("player-score").innerHTML = 'Skor: 0';
-            document.getElementById("banker-score").innerHTML = 'Skor: 0';
             document.getElementById("result").innerHTML = '';
 
             // Reveal player and banker cards with delay
-            drawAndRevealCard(playerHand, "player-cards", 0, "card-left", "player-score");
-            drawAndRevealCard(bankerHand, "banker-cards", 1000, "card-left", "banker-score");
-            drawAndRevealCard(playerHand, "player-cards", 2000, "card-right", "player-score");
-            drawAndRevealCard(bankerHand, "banker-cards", 3000, "card-right", "banker-score");
+            drawAndRevealCard(playerHand, "player-cards");
+            setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards"), 1000);
+            setTimeout(() => drawAndRevealCard(playerHand, "player-cards"), 2000);
+            setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards"), 3000);
 
             // Show result after all cards are revealed
             setTimeout(() => {
@@ -163,21 +157,27 @@
             }, 4000);
         }
 
-        function drawAndRevealCard(hand, elementId, delay, positionClass, scoreId) {
-            setTimeout(() => {
-                const card = drawCard();
-                hand.push(card);
+        function drawAndRevealCard(hand, elementId) {
+            const card = drawCard();
+            hand.push(card);
 
-                // Create an img element for the card
-                const cardImage = document.createElement("img");
-                cardImage.src = card.image;
-                cardImage.className = `card-image ${positionClass}`;
-                document.getElementById(elementId).appendChild(cardImage);
+            // Create container for card image and score
+            const cardContainer = document.createElement("div");
+            cardContainer.className = "card-image-container";
 
-                // Update the score in real-time
-                const score = calculateScore(hand);
-                document.getElementById(scoreId).innerHTML = `Skor: ${score}`;
-            }, delay);
+            // Create an img element for the card
+            const cardImage = document.createElement("img");
+            cardImage.src = card.image;
+            cardImage.className = "card-image";
+            cardContainer.appendChild(cardImage);
+
+            // Create a score element under each card
+            const cardScore = document.createElement("div");
+            cardScore.className = "score";
+            cardScore.innerHTML = card.value;
+            cardContainer.appendChild(cardScore);
+
+            document.getElementById(elementId).appendChild(cardContainer);
         }
 
         function drawCard() {
@@ -191,11 +191,11 @@
 
         function determineWinner(playerScore, bankerScore) {
             if (playerScore > bankerScore) {
-                return 'Pemain menang!';
+                return 'Pemain menang';
             } else if (bankerScore > playerScore) {
-                return 'Banker menang!';
+                return 'Banker menang';
             } else {
-                return 'Seri!';
+                return 'Seri';
             }
         }
     </script>
