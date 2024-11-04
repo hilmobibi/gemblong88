@@ -41,7 +41,7 @@
         .hand {
             font-size: 20px;
             position: relative;
-            width: 150px;
+            width: 200px;
         }
         .card-images {
             display: flex;
@@ -49,9 +49,6 @@
             justify-content: center;
             margin-top: 10px;
             gap: 10px;
-        }
-        .card-image-container {
-            position: relative;
         }
         .card-image {
             width: 60px;
@@ -145,36 +142,46 @@
             document.getElementById("player-cumulative-score").innerHTML = 'Skor: 0';
             document.getElementById("banker-cumulative-score").innerHTML = 'Skor: 0';
 
-            // Reveal player and banker cards with delay
+            // Draw initial two cards for both player and banker
             drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score");
             setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 1000);
             setTimeout(() => drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score"), 2000);
             setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 3000);
 
-            // Show result after all cards are revealed
+            // Check if a third card is needed after a delay
             setTimeout(() => {
                 const playerScore = calculateScore(playerHand);
                 const bankerScore = calculateScore(bankerHand);
 
-                let result = determineWinner(playerScore, bankerScore);
-                document.getElementById("result").innerHTML = result;
-            }, 4000);
+                // Player draws a third card if score is 5 or less
+                if (playerScore <= 5) {
+                    setTimeout(() => drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score"), 4000);
+                }
+                // Banker draws a third card based on specific rules
+                if (bankerScore <= 5 && playerHand.length === 2) {
+                    setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 5000);
+                }
+
+                // Show result after all cards are revealed
+                setTimeout(() => {
+                    const finalPlayerScore = calculateScore(playerHand);
+                    const finalBankerScore = calculateScore(bankerHand);
+
+                    let result = determineWinner(finalPlayerScore, finalBankerScore);
+                    document.getElementById("result").innerHTML = result;
+                }, 6000);
+            }, 3500);
         }
 
         function drawAndRevealCard(hand, elementId, scoreId) {
             const card = drawCard();
             hand.push(card);
 
-            // Create container for card image
-            const cardContainer = document.createElement("div");
-            cardContainer.className = "card-image-container";
-
             // Create an img element for the card
             const cardImage = document.createElement("img");
             cardImage.src = card.image;
             cardImage.className = "card-image";
-            cardContainer.appendChild(cardImage);
-            document.getElementById(elementId).appendChild(cardContainer);
+            document.getElementById(elementId).appendChild(cardImage);
 
             // Delay score update to show cumulative score after card appears
             setTimeout(() => {
