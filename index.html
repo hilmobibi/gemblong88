@@ -23,9 +23,19 @@
             color: #fff;
             background-color: #4CAF50;
         }
-        #result, #player-hand, #banker-hand {
-            margin: 20px;
+        .hands-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px; /* Spacing between player and banker hands */
+            margin-top: 20px;
+        }
+        .hand {
             font-size: 20px;
+        }
+        #result {
+            margin: 20px;
+            font-size: 22px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -38,8 +48,10 @@
             <button class="bet-button" onclick="placeBet('Tie')">Bet on Tie</button>
         </div>
         <div id="result"></div>
-        <div id="player-hand"></div>
-        <div id="banker-hand"></div>
+        <div class="hands-container">
+            <div id="player-hand" class="hand">Player Hand:</div>
+            <div id="banker-hand" class="hand">Banker Hand:</div>
+        </div>
     </div>
 
     <script>
