@@ -98,7 +98,7 @@
 .coin-2k {
     background-color: #9b9bac; /* Medium Gray */
 }
-
+                                                                                                                                                                                                                                                                  
 .coin-5k {
     background-color: #a5541a; /* Saddle Brown */
 }
@@ -171,7 +171,7 @@
             font-size: 17px;
             font-weight: bold;
             display: inline;
-            margin: 2px;
+            margin:  1fr ;
         }
         .win-amount {
             font-size: 16px;
@@ -233,13 +233,13 @@
         let playerHand = [];
         let bankerHand = [];
         let playerBet = '';
-        let balance = 10000; // initial balance
+        let balance = localStorage.getItem("balance") ? parseInt(localStorage.getItem("balance")) : 10000; // Retrieve saved balance or set default
         let betAmount = 0; // selected bet amount
-
+    
         function formatCurrency(amount) {
             return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); // Format with thousands separator
         }
-
+    
         function initializeDeck() {
             deck = [];
             const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
@@ -261,20 +261,20 @@
             }
             shuffleDeck();
         }
-
+    
         function shuffleDeck() {
             for (let i = deck.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [deck[i], deck[j]] = [deck[j], deck[i]];
             }
         }
-
+    
         function selectBetAmount(amount) {
             betAmount = amount;
             document.getElementById("bet-amount").innerHTML = `Taruhan: Rp ${formatCurrency(amount)}`;
             document.getElementById("result").innerHTML = ''; // Clear result when selecting a new bet
         }
-
+    
         function placeBet(bet) {
             if (betAmount > balance) {
                 alert("Sadar diri tolol, liat saldo lu berapa...");
@@ -283,98 +283,97 @@
             playerBet = bet;
             balance -= betAmount;
             updateBalanceDisplay();
+            localStorage.setItem("balance", balance); // Save updated balance to localStorage
             startGame(betAmount);
         }
-
+    
         function updateBalanceDisplay() {
             document.getElementById("balance").innerHTML = `Saldo: Rp ${formatCurrency(balance)}`;
         }
-
+    
         function startGame(betAmount) {
-    initializeDeck();
-    playerHand = [];
-    bankerHand = [];
-
-    document.getElementById("player-cards").innerHTML = '';
-    document.getElementById("banker-cards").innerHTML = '';
-    document.getElementById("result").innerHTML = '';
-    document.getElementById("player-cumulative-score").innerHTML = 'Skor: 0';
-    document.getElementById("banker-cumulative-score").innerHTML = 'Skor: 0';
-
-    drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score");
-    setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 1000);
-    setTimeout(() => drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score"), 2000);
-    setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 3000);
-    setTimeout(() => {
-        const playerScore = calculateScore(playerHand);
-        const bankerScore = calculateScore(bankerHand);
-
-        let result = determineWinner(playerScore, bankerScore);
-        let winAmount = 0;
-
-        document.getElementById("result").innerHTML = result;
-
-        // Tambah saldo berdasarkan hasil
-        if (result === 'Pemain menang' && playerBet === 'Player') {
-            winAmount = betAmount * 2; // Pemain menang
-            balance += winAmount;
-        } else if (result === 'Banker menang' && playerBet === 'Banker') {
-            winAmount = betAmount * 1.95; // Banker menang
-            balance += winAmount;
-        } else if (result === 'Seri' && playerBet === 'Tie') {
-            winAmount = betAmount * 8; // Seri
-            balance += winAmount;
-        } else if (result === 'Seri' && (playerBet === 'Player' || playerBet === 'Banker')) {
-            // Kembalikan saldo jika hasilnya Seri dan taruhan bukan di Tie
-            balance += betAmount; 
-            winAmount = betAmount; // Set winAmount to the returned bet amount for display
-        }
-
-        updateBalanceDisplay();
-
-        if (winAmount > 0) {
-            const winAmountDisplay = document.createElement("div");
-            winAmountDisplay.className = "win-amount";
-            winAmountDisplay.innerHTML = `Uang yang didapat: Rp ${formatCurrency(winAmount)}`;
-            document.getElementById("result").appendChild(winAmountDisplay);
-        }
-
-        setTimeout(() => {
+            initializeDeck();
+            playerHand = [];
+            bankerHand = [];
+    
+            document.getElementById("player-cards").innerHTML = '';
+            document.getElementById("banker-cards").innerHTML = '';
             document.getElementById("result").innerHTML = '';
-        }, 2000);
-    }, 4000);
-}
-
-        
-
+            document.getElementById("player-cumulative-score").innerHTML = 'Skor: 0';
+            document.getElementById("banker-cumulative-score").innerHTML = 'Skor: 0';
+    
+            drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score");
+            setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 1000);
+            setTimeout(() => drawAndRevealCard(playerHand, "player-cards", "player-cumulative-score"), 2000);
+            setTimeout(() => drawAndRevealCard(bankerHand, "banker-cards", "banker-cumulative-score"), 3000);
+            setTimeout(() => {
+                const playerScore = calculateScore(playerHand);
+                const bankerScore = calculateScore(bankerHand);
+    
+                let result = determineWinner(playerScore, bankerScore);
+                let winAmount = 0;
+    
+                document.getElementById("result").innerHTML = result;
+    
+                // Update balance based on the result
+                if (result === 'Pemain menang' && playerBet === 'Player') {
+                    winAmount = betAmount * 2;
+                    balance += winAmount;
+                } else if (result === 'Banker menang' && playerBet === 'Banker') {
+                    winAmount = betAmount * 1.95;
+                    balance += winAmount;
+                } else if (result === 'Seri' && playerBet === 'Tie') {
+                    winAmount = betAmount * 8;
+                    balance += winAmount;
+                } else if (result === 'Seri' && (playerBet === 'Player' || playerBet === 'Banker')) {
+                    balance += betAmount;
+                    winAmount = betAmount;
+                }
+    
+                updateBalanceDisplay();
+                localStorage.setItem("balance", balance); // Save updated balance to localStorage
+    
+                if (winAmount > 0) {
+                    const winAmountDisplay = document.createElement("div");
+                    winAmountDisplay.className = "win-amount";
+                    winAmountDisplay.innerHTML = `Uang yang didapat: Rp ${formatCurrency(winAmount)}`;
+                    document.getElementById("result").appendChild(winAmountDisplay);
+                }
+    
+                setTimeout(() => {
+                    document.getElementById("result").innerHTML = '';
+                }, 2000);
+            }, 4000);
+        }
+    
         function drawAndRevealCard(hand, elementId, scoreId) {
             const card = drawCard();
             hand.push(card);
-
+    
             const cardContainer = document.createElement("div");
             cardContainer.className = "card-image-container";
-
+    
             const cardImage = document.createElement("img");
             cardImage.src = card.image;
             cardImage.className = "card-image";
             cardContainer.appendChild(cardImage);
             document.getElementById(elementId).appendChild(cardContainer);
-
+    
             setTimeout(() => {
                 const cumulativeScore = calculateScore(hand);
                 document.getElementById(scoreId).innerHTML = `Skor: ${cumulativeScore}`;
             }, 500);
         }
-
+    
         function drawCard() {
             return deck.pop();
         }
-
+    
         function calculateScore(hand) {
             let total = hand.reduce((sum, card) => sum + card.value, 0);
             return total % 10;
         }
-
+    
         function determineWinner(playerScore, bankerScore) {
             if (playerScore > bankerScore) {
                 return 'Pemain menang';
@@ -384,6 +383,10 @@
                 return 'Seri';
             }
         }
+    
+        // Display balance on page load
+        updateBalanceDisplay();
     </script>
+    
 </body>
 </html>
