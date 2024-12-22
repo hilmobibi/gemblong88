@@ -1,0 +1,173 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #2e8b57;
+  color: #fff;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Make sure the body covers the full height */
+}
+.container {
+  margin-top: 50px;
+  flex: 1; /* Allow this section to grow */
+}
+.hands-container {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  margin-top: 20px;
+}
+.hand {
+  font-size: 20px;
+  position: relative;
+  width: 150px;
+}
+.card-images {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  margin-top: 10px;
+  gap: 10px;
+}
+.card-image {
+  width: 60px;
+  height: auto;
+  transition: transform 0.5s ease;
+}
+.cumulative-score {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+#result {
+  margin: 20px;
+  font-size: 22px;
+  font-weight: bold;
+}
+.coin-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+.coin {
+padding: 10px;
+cursor: pointer;
+font-size: 16px;
+color: #fff;
+border-radius: 50%; /* Circular shape */
+width: 50px;
+height: 50px;
+display: flex;
+align-items: center;
+justify-content: center;
+position: relative; /* Position relative for border */
+font-weight: bold; /* Make text bold */
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Shadow effect for depth */
+transition: transform 0.2s; /* Smooth scale on hover */
+border: 4px solid #fff; /* White border */
+background-clip: padding-box; /* Prevents background color from bleeding into the border */
+}
+
+.coin::before {
+content: '';
+position: absolute;
+top: -6px; /* Positioning for rim effect */
+left: -6px;
+right: -6px;
+bottom: -6px;
+border-radius: 50%;
+border: 4px solid #fff; /* Outer white border */
+border-top-color: transparent; /* Remove top border to create rim effect */
+border-bottom-color: transparent; /* Remove bottom border to create rim effect */
+z-index: -1; /* Place the rim behind the coin */
+}
+
+.coin:hover {
+transform: scale(1.1); /* Slightly increase size on hover */
+}
+
+.coin-2k {
+background-color: #9b9bac; /* Medium Gray */
+}
+                                                                                                                                                                                                                                                        
+.coin-5k {
+background-color: #a5541a; /* Saddle Brown */
+}
+
+.coin-10k {
+background-color: #ffaf02; /* Dark Orange */
+}
+
+.coin-20k {
+background-color: #05b8b8; /* Dark Cyan */
+}
+
+.coin-50k {
+background-color: #ff3300; /* Red */
+}
+
+.coin-100k {
+background-color: #00f7ff; /* Light Cyan */
+}
+
+
+
+.bottomSection {
+  background-color: #000000;
+  padding: 10px 0;
+}
+.bet-button {
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  border: none;
+  color: #fff;
+  margin:  10px;
+}
+.bbplayer {
+background: linear-gradient(to bottom left, #66B2E2, #0088ff); /* Darker light blue to darker blue gradient */
+padding: 10px 20px;
+font-size: 18px;
+cursor: pointer;
+border: none;
+color: #fff;
+margin: 10px;
+border-radius: 5px; /* Optional: Adds rounded corners */
+}
+
+.bbtie {
+background: linear-gradient(to bottom, #58da61, #11d11e); /* Darker light green to darker green gradient */
+padding: 10px 20px;
+font-size: 18px;
+cursor: pointer;
+border: none;
+color: #fff;
+margin: 10px;
+border-radius: 5px; /* Optional: Adds rounded corners */
+}
+
+.bbbanker {
+background: linear-gradient(to bottom right, #FF4C3A, #ff0202); /* Darker light red to darker red gradient */
+padding: 10px 20px;
+font-size: 18px;
+cursor: pointer;
+border: none;
+color: #fff;
+margin: 10px;
+border-radius: 5px; /* Optional: Adds rounded corners */
+}
+
+
+#balance, #bet-amount {
+  font-size: 17px;
+  font-weight: bold;
+  display: inline;
+  margin:  1fr ;
+}
+.win-amount {
+  font-size: 16px;
+  margin-top: 10px;
+  color: gold; /* Change the color to gold */
+}
