@@ -1,5 +1,5 @@
 # gemblong88
-the purpose of this web is to give someone a free alternative to online gambling, let alone someone who wanted to experience new things
+the purpose of this web is to provide someone an alternative to online gambling
 
 ## feature
 - bacarrat game
