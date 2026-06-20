@@ -46,7 +46,7 @@ function selectBetAmount(amount) {
 
 function placeBet(bet) {
     if (betAmount > balance) {
-        alert("Sadar diri, liat saldo lu berapa...");
+        alert("Saldo kurang...");
         return;
     }
     playerBet = bet;
